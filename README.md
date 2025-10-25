@@ -1,8 +1,9 @@
 # 🗺️ TanaanTracker
 
-**TanaanTracker** is a lightweight **World of Warcraft: Warlords of Draenor** client version 7.3.5 (legion) addon that helps you **track, share, and sync rare spawn timers** in **Tanaan Jungle**.  
+**TanaanTracker** is a lightweight **World of Warcraft** client version 7.3.5 (legion) addon that helps you **track, share, and sync rare spawn timers** in **Tanaan Jungle**.  
 It automatically logs rare kills, calculates respawn timers, and synchronizes data between guildmates and party members.
 
+Tested Servers: Tauri
 ---
 
 ## 📘 Addon Overview
@@ -92,7 +93,8 @@ Modification and redistribution are allowed provided proper credit is given to t
 ---
 
 ## ❤️ Credits
-Created and maintained by **RegDesu**  
+Created and maintained by **Reg**
+Special thanks to Saotomei@Tauri
 Contributions, bug reports, and feedback are always welcome!
 
 ---
