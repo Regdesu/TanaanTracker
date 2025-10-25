@@ -58,13 +58,23 @@ The addon also syncs your data with others in your guild or group so everyone st
 |----------|-------------|
 | `/tan` | Toggle the main window |
 | `/tan <rare name>` | Show respawn info for a specific rare |
+| `/tan <rare name> <channel>` | Announce specific rare timer to `say`, `yell`, `guild`, `party`, or `raid` |
 | `/tan <channel>` | Announce all timers to `say`, `yell`, `guild`, `party`, or `raid` |
 | `/tan reset` | Wipe all saved timer data (requires confirmation) |
 | `/tan ver` or `/tan version` | Show the current addon version |
-| `/tan help` | Display a full list of available commands |
+| `/tan help` or `/tan ?` | Display a full list of available commands |
 | `/tsync ...` | Manually sync timers (see examples above) |
 
+`<rare name>` can be replaced by it's alias:
+| Rare Full Name | Aliases |
+|----------|-------------|
+| Doomroller | `doom` or `dr` |
+| Vengeance | `veng` or `ven` |
+| Terrorfist | `terror` or `tf` |
+| Deathtalon | `talon` or `dt` |
+
 You can also **click the minimap button** to open or close the UI.
+
 
 ---
 
