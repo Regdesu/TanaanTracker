@@ -102,8 +102,8 @@ Modification and redistribution are allowed provided proper credit is given to t
 ---
 
 ## ❤️ Credits
-Created and maintained by **Reg**
-Special thanks to Saotomei@Tauri
+Created and maintained by **Reg** AKA **Mcfinger/Armpito**.<br />
+Special thanks to **Saotomei@Tauri**.<br />
 Contributions, bug reports, and feedback are always welcome!
 
 ---
