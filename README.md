@@ -1,4 +1,7 @@
 # 🗺️ TanaanTracker
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/a4ded28c-cf55-46ad-b105-0fbf0b96af2f" alt="TanaanTracker Logo" width="300" box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);"/>
+</p>
 
 **TanaanTracker** is a lightweight **World of Warcraft** addon made especially for client version 7.3.5 (legion)@Tauri that helps you **track, share, and sync rare spawn timers** in **Tanaan Jungle**.  
 It automatically logs rare kills, calculates respawn timers, and synchronizes data between guildmates and party members.
@@ -84,6 +87,15 @@ You can also **click the minimap button** to open or close the UI.
 |--------|----------|
 | **[TomTom](https://www.curseforge.com/wow/addons/tomtom)** | Enables waypoint and navigation arrow support. *(Optional)* |
 | **[ElvUI](https://www.tukui.org/)** | Provides visual skin integration. *(Optional)* |
+
+---
+
+## 📸 Screenshots
+
+<p>
+  <img src="https://github.com/user-attachments/assets/61474d3e-31d0-4fd2-a4a8-938211832d0a" alt="Main UI" width="583"/><br/>
+  <em>Main addon window showing rare timers</em>
+</p>
 
 ---
 
