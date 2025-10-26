@@ -9,7 +9,7 @@ It automatically logs rare kills, calculates respawn timers, and synchronizes da
 
 TanaanTracker keeps your rare data up to date in real time.  
 When you kill a rare, it’s automatically recorded and displayed with a countdown until its respawn.  
-The addon also syncs your data with others in your guild or group so everyone stays updated effortlessly.
+The addon also syncs your data with others in your guild automatically so everyone stays updated effortlessly.
 
 ---
 
