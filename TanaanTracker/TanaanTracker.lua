@@ -484,31 +484,51 @@ end
 -- Combat Log + Loot tracking
 -------------------------------------------------------------
 local function handleCombatLog(...)
-    local _, subevent, _, _, _, _, _, _, destName = ...
-    if not destName or type(destName) ~= "string" then return end
+    local _, subevent, _, _, _, _, _, destGUID, destName = ...
+
+    if not destGUID or not subevent then return end
+
+    -- only care about unit deaths
+    if subevent ~= "UNIT_DIED" and subevent ~= "PARTY_KILL" then return end
+
+    -- extract NPC ID from GUID
+    local npcId = tonumber(destGUID:match("-(%d+)-%x+$"))
+    if not npcId then return end
+
     local rares = TanaanTracker.rares
-    for rareName in pairs(rares) do
-        if subevent == "UNIT_DIED" or subevent == "PARTY_KILL" then
-            if destName:find(rareName, 1, true) then
-                local now = TanaanTracker:GetServerNow()
-                local last = lastWrite[rareName] or 0
-                if (now - last) < WRITE_THROTTLE then return end
-                TanaanTracker:RealmDB()[rareName] = now
-                TanaanTracker.MarkCharKillToday(rareName)
-                if TanaanTrackerDB.autoAnnounce and IsInGuild() then
-                    local msg = string.format("%s down — respawn ~%dm", rareName, TanaanTracker.rares[rareName].respawn/60)
-                    SendChatMessage(msg, "GUILD")
-                end
-                lastWrite[rareName] = now
-                print(string.format("|cffff0000%s killed!|r Respawn timer started (%d min).", rareName, rares[rareName].respawn / 60))
-                TanaanTracker:DebugPrint("Saved time for", rareName, now)
-                if TanaanTracker.SendGuildSync then TanaanTracker.SendGuildSync(rareName, now) end
-                if TanaanTracker.UpdateUI then TanaanTracker.UpdateUI() end
-                break
+    for rareName, data in pairs(rares) do
+        if data.id == npcId then
+            local now = TanaanTracker:GetServerNow()
+            local last = lastWrite[rareName] or 0
+            if (now - last) < WRITE_THROTTLE then return end
+
+            -- save kill time to DB
+            TanaanTracker:RealmDB()[rareName] = now
+            TanaanTracker.MarkCharKillToday(rareName)
+
+            -- auto announce to guild
+            if TanaanTrackerDB.autoAnnounce and IsInGuild() then
+                local msg = string.format("%s down — respawn ~%dm", rareName, data.respawn / 60)
+                SendChatMessage(msg, "GUILD")
             end
+
+            lastWrite[rareName] = now
+            print(string.format("|cffff0000%s killed!|r Respawn timer started (%d min).", rareName, data.respawn / 60))
+
+            TanaanTracker:DebugPrint("Saved time for", rareName, now)
+
+            -- sync and update UI
+            if TanaanTracker.SendGuildSync then
+                TanaanTracker.SendGuildSync(rareName, now)
+            end
+            if TanaanTracker.UpdateUI then
+                TanaanTracker.UpdateUI()
+            end
+            break
         end
     end
 end
+
 
 local function handleLootOpened()
     local target = UnitName("target")
