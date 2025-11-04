@@ -97,6 +97,10 @@ You can also **click the minimap button** to open or close the UI.
   <em>Main addon window showing rare timers</em>
 </p>
 
+  `Left clicking` a rare's name will send it's timer to your `/guild`.
+  
+  `Right clicking` will send to `/say`.
+
 ---
 
 ## 💡 Additional Notes
