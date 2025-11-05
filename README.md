@@ -1,4 +1,4 @@
-# 🗺️ TanaanTracker Version 2.0
+# 🗺️ TanaanTracker Version 2.1
 <p align="center">
   <img src="https://github.com/user-attachments/assets/a4ded28c-cf55-46ad-b105-0fbf0b96af2f" alt="TanaanTracker Logo" width="300" box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);"/>
 </p>
