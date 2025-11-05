@@ -231,7 +231,7 @@ function TanaanTracker.CreateMainFrame()
             if t and type(t) == "number" then
                 local remaining = (t + data.respawn) - GetServerTime()
                 if remaining < 0 then remaining = 0 end
-                msgOut = string.format("%s: next respawn ~%s (killed at %s)",
+                msgOut = string.format("%s: in ~%s (killed %s)",
                     name, TanaanTracker.formatCountdown(remaining), TanaanTracker.safeFormatTime(t))
             else
                 msgOut = name .. ": no data yet"
