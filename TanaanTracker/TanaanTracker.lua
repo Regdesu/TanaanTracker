@@ -427,7 +427,7 @@ SlashCmdList["TAN"] = function(msg)
         if t and type(t) == "number" then
             local remaining = (t + rares[rareName].respawn) - TanaanTracker:GetServerNow()
             if remaining < 0 then remaining = 0 end
-            local msgOut = string.format("%s: next respawn ~%s (killed at %s)",
+            local msgOut = string.format("%s: in ~%s (killed %s)",
                 rareName, TanaanTracker.formatCountdown(remaining), TanaanTracker.safeFormatTime(t))
             if arg ~= "" then TanaanTracker.announce(msgOut, arg) else print(msgOut) end
         else

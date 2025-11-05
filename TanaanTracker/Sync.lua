@@ -19,6 +19,13 @@ local function TryRegisterPrefix()
     end
 end
 
+-- debug helper
+local function TTDebug(msg)
+  if TanaanTrackerDB and TanaanTrackerDB.debug then
+    print("|cff66ff66[TanaanTracker]|r " .. tostring(msg))
+  end
+end
+
 -- login hook: register prefix, then request guild sync (with safer delay)
 local frame = CreateFrame("Frame")
 frame:RegisterEvent("PLAYER_LOGIN")
@@ -59,8 +66,7 @@ function TanaanTracker.HandleSyncRequest(sender)
     if not SendAddonMessage then return end
     if not TanaanTrackerDB or not TanaanTrackerDB.realms then return end
 
-    print("|cff66ff66[TanaanTracker]|r Guild sync request from |cffffff00" ..
-        (sender or "?") .. "|r — sending all realm data...")
+    TTDebug(("Guild sync request from %s — sending all realm data..."):format(sender or "?"))
 
     local i = 0
     for realmName, realmDB in pairs(TanaanTrackerDB.realms) do
@@ -166,8 +172,7 @@ do
 
                 if not old or tnum > old then
                     dbTarget[rareName] = tnum
-                    print(string.format("|cff00ff00[TanaanTracker]|r Updated %s (%s) from %s.",
-                        rareName, targetRealm, origin or sender))
+                    TTDebug(("Updated %s (%s) from %s."):format(rareName, targetRealm, origin or sender))
 
                     if TanaanTracker.currentRealmView == targetRealm and TanaanTracker.UpdateUI then
                         TanaanTracker.UpdateUI()
@@ -200,8 +205,7 @@ do
 
             if not myTs or tnum > myTs then
                 dbTarget[rareName] = tnum
-                print(string.format("|cff00ff00[TanaanTracker]|r Updated %s (%s) from %s.",
-                    rareName, targetRealm, origin or sender))
+                TTDebug(("Updated %s (%s) from %s."):format(rareName, targetRealm, origin or sender))
                 if TanaanTracker.currentRealmView == targetRealm and TanaanTracker.UpdateUI then
                     TanaanTracker.UpdateUI()
                 end
@@ -233,7 +237,7 @@ function TanaanTracker.RequestGuildSync()
 
     -- Ask others to send their data
     SendAddonMessage(SYNC_PREFIX, "REQ|" .. who, "GUILD")
-    print("|cff66ff66[TanaanTracker]|r Requesting guild sync...")
+    TTDebug("Requesting guild sync...")
 
     -- Track whether we received any updates within 5 seconds
     TanaanTracker._syncStartTime = GetTime()
@@ -247,7 +251,7 @@ function TanaanTracker.RequestGuildSync()
                 TanaanTracker._syncUpdatesCount,
                 TanaanTracker._syncUpdatesCount == 1 and "" or "s"))
         else
-            print("|cff66ff66[TanaanTracker]|r No data to sync — already up to date!")
+            print("|cff66ff66[TanaanTracker]|r timers up to date!")
         end
         TanaanTracker._syncStartTime = nil
         TanaanTracker._syncGotUpdate = nil
