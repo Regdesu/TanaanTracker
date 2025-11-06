@@ -136,6 +136,14 @@ end
 local WRITE_THROTTLE = 5
 local lastWrite = {}
 local alerted = {}
+local bit = bit
+local taggedByMe = {}  -- [destGUID] = { rareName=..., ts=... }
+
+local function IsMine(sourceGUID, sourceFlags)
+    return bit.band(sourceFlags or 0, COMBATLOG_OBJECT_AFFILIATION_MINE or 0) ~= 0
+        or sourceGUID == UnitGUID("player")
+        or sourceGUID == UnitGUID("pet")
+end
 
 -------------------------------------------------------------
 -- Alerts (5m warning text and sound + 1m local)
@@ -503,69 +511,86 @@ end
 -------------------------------------------------------------
 -- Combat Log + Loot tracking
 -------------------------------------------------------------
-local bit_band = bit and bit.band or function() return 0 end
-local AFFIL_MINE  = COMBATLOG_OBJECT_AFFILIATION_MINE
-local AFFIL_PARTY = COMBATLOG_OBJECT_AFFILIATION_PARTY
-local AFFIL_RAID  = COMBATLOG_OBJECT_AFFILIATION_RAID
-
--- pull CLEU args from API if available, else from varargs
-local function CLArgs(...)
-    if type(CombatLogGetCurrentEventInfo) == "function" then
-        return CombatLogGetCurrentEventInfo()
-    else
-        return ...
-    end
-end
-
 local function handleCombatLog(...)
-    -- timestamp, subevent, hideCaster, srcGUID, srcName, srcFlags, srcRaidFlags,
-    -- destGUID, destName, destFlags, destRaidFlags
-    local _, subevent, _, srcGUID, srcName, srcFlags, _, destGUID = CLArgs(...)
+    -- timestamp, subevent, hideCaster,
+    -- sourceGUID, sourceName, sourceFlags, sourceRaidFlags,
+    -- destGUID, destName, destFlags, destRaidFlags, ...
+    local _, subevent, _, sourceGUID, _, sourceFlags, _, destGUID, _, _, _ = ...
 
-    if not destGUID or not subevent then return end
-    if subevent ~= "UNIT_DIED" and subevent ~= "PARTY_KILL" then return end
+    if not subevent or not destGUID then return end
 
-    -- extract NPC ID from GUID
-    local npcId = tonumber(destGUID:match("-(%d+)-%x+$"))
-    if not npcId then return end
-
-    -- find which rare it is
     local rares = TanaanTracker.rares
-    local matchedName, data
-    for rareName, rdata in pairs(rares) do
-        if rdata.id == npcId then matchedName, data = rareName, rdata; break end
-    end
-    if not matchedName then return end
+    if not rares then return end
 
-    local now  = TanaanTracker:GetServerNow()
-    local last = (lastWrite[matchedName] or 0)
-    if (now - last) < WRITE_THROTTLE then return end
-
-    -- always record the timer when we observe the rare’s death (in vicinity)
-    TanaanTracker:RealmDB()[matchedName] = now
-    lastWrite[matchedName] = now
-    print(string.format("|cffff0000%s killed!|r Respawn timer started (%d min).", matchedName, (data.respawn or 3600)/60))
-    TanaanTracker:DebugPrint("Saved time for", matchedName, now)
-
-    -- Only mark “killed today” + auto-announce if *player/party/raid* got the kill (used to register kill mark even if player was simply in vicinity of rare)
-    if subevent == "PARTY_KILL" and bit_band(srcFlags or 0, (AFFIL_MINE or 0) + (AFFIL_PARTY or 0) + (AFFIL_RAID or 0)) ~= 0 then
-        if TanaanTracker.MarkCharKillToday then
-            TanaanTracker.MarkCharKillToday(matchedName)
+    -- get rareName by NPC id
+    local function RareNameFromGUID(guid)
+        -- extract NPC ID from creature GUID
+        local npcId = tonumber(guid:match("-(%d+)-%x+$"))
+        if not npcId then return nil end
+        for rName, data in pairs(rares) do
+            if data and data.id == npcId then
+                return rName, data
+            end
         end
-        if TanaanTrackerDB.autoAnnounce and IsInGuild() then
-            local msg = string.format("%s down — respawn ~%dm", matchedName, (data.respawn or 3600)/60)
-            SendChatMessage(msg, "GUILD")
-        end
+        return nil
     end
 
-    if TanaanTracker.SendGuildSync then
-        TanaanTracker.SendGuildSync(matchedName, now)
+    -- record that *you* tagged this mob (any damage event from you/your pet)
+    if subevent == "SWING_DAMAGE"
+        or subevent == "RANGE_DAMAGE"
+        or subevent == "SPELL_DAMAGE"
+        or subevent == "SPELL_PERIODIC_DAMAGE"
+    then
+        if sourceGUID and IsMine(sourceGUID, sourceFlags) then
+            local rareName = RareNameFromGUID(destGUID)
+            if rareName then
+                taggedByMe[destGUID] = { rareName = rareName, ts = TanaanTracker:GetServerNow() }
+            end
+        end
+        return
     end
-    if TanaanTracker.UpdateUI then
-        TanaanTracker.UpdateUI()
+
+    -- on death, update timer; announce/mark only if tagged
+    if subevent == "UNIT_DIED" or subevent == "PARTY_KILL" then
+        local rareName, data = RareNameFromGUID(destGUID)
+        if not rareName then return end
+
+        local now = TanaanTracker:GetServerNow()
+        local last = (lastWrite and lastWrite[rareName]) or 0
+        if (now - last) < WRITE_THROTTLE then return end
+
+        -- always save the kill time
+        TanaanTracker:RealmDB()[rareName] = now
+        lastWrite[rareName] = now
+
+        -- decide if this was a confirmed kill (tagged recently)
+        local tagged = taggedByMe[destGUID]
+        if tagged and tagged.rareName == rareName and (now - tagged.ts) <= 600 then
+            -- 10m window: safe cushion for long fights (if solo on wod)
+            if TanaanTracker.MarkCharKillToday then
+                TanaanTracker.MarkCharKillToday(rareName)
+            end
+
+            if TanaanTrackerDB.autoAnnounce and IsInGuild() then
+                local mins = (data.respawn or 3600) / 60
+                SendChatMessage(string.format("%s down — respawn ~%dm", rareName, mins), "GUILD")
+            end
+        end
+
+        -- UI + sync, regardless of who tagged (so timers stay correct)
+        print(string.format("|cffff0000%s killed!|r Respawn timer started (%d min).", rareName, (data.respawn or 3600)/60))
+        TanaanTracker:DebugPrint("Saved time for", rareName, now)
+        if TanaanTracker.SendGuildSync then
+            TanaanTracker.SendGuildSync(rareName, now)
+        end
+        if TanaanTracker.UpdateUI then
+            TanaanTracker.UpdateUI()
+        end
+
+        -- cleanup tag cache for this corpse
+        taggedByMe[destGUID] = nil
     end
 end
-
 
 
 local function handleLootOpened()

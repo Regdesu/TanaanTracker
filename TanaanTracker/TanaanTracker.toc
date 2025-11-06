@@ -2,7 +2,7 @@
 ## Title: TanaanTracker
 ## Notes: Track Tanaan Champions with Timers, TomTom waypoints, Guild Sync, Manual Sync, Per-realm Tracking.
 ## Author: Reg
-## Version: 2.2
+## Version: 2.2.1
 ## SavedVariables: TanaanTrackerDB
 
 TanaanTracker.lua
