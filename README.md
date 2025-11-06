@@ -1,4 +1,4 @@
-# 🗺️ TanaanTracker Version 2.1
+# 🗺️ TanaanTracker Version 2.2
 <p align="center">
   <img src="https://github.com/user-attachments/assets/a4ded28c-cf55-46ad-b105-0fbf0b96af2f" alt="TanaanTracker Logo" width="300" box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);"/>
 </p>
@@ -45,6 +45,7 @@ The addon also syncs your data with others in your guild automatically so everyo
 ### 🔔 Alerts & Reminders
 - Receive visual and sound alerts **5 minutes** and **1 minute** before a rare respawns.  
 - Alerts are hidden while in combat to avoid distractions.
+- You can toggle the alerts on and off at any time from the UI.
 
 ### 💬 Auto-Announce Kills
 - Optionally announces your rare kills to your **guild chat** automatically:
@@ -93,7 +94,7 @@ You can also **click the minimap button** to open or close the UI.
 ## 📸 Screenshots
 
 <p>
-  <img src="https://github.com/user-attachments/assets/61474d3e-31d0-4fd2-a4a8-938211832d0a" alt="Main UI" width="583"/><br/>
+  <img src="https://github.com/user-attachments/assets/f30e24f4-45a6-4f81-9dbc-bdd1f863beed" alt="Main UI" width="583"/><br/>
   <em>Main addon window showing rare timers</em>
 </p>
 
