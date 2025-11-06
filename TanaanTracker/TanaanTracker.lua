@@ -60,6 +60,20 @@ EF:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 EF:RegisterEvent("LOOT_OPENED")
 EF:RegisterEvent("CHAT_MSG_ADDON")
 
+
+-- alerts setting helpers (default: enabled)
+function TanaanTracker.GetAlertsEnabled()
+    if TanaanTrackerDB.alertsEnabled == nil then
+        TanaanTrackerDB.alertsEnabled = true
+    end
+    return TanaanTrackerDB.alertsEnabled
+end
+
+function TanaanTracker.SetAlertsEnabled(enabled)
+    TanaanTrackerDB.alertsEnabled = not not enabled
+end
+
+
 -------------------------------------------------------------
 -- Per-character daily kill tracking
 -------------------------------------------------------------
@@ -127,6 +141,10 @@ local alerted = {}
 -- Alerts (5m warning text and sound + 1m local)
 -------------------------------------------------------------
 local function MaybeAlert(rareName, remaining)
+
+    -- master toggle: bail if alerts are disabled
+    if not TanaanTracker.GetAlertsEnabled() then return end
+
     if not remaining or remaining <= 0 then
         alerted[rareName] = nil
         return
@@ -233,6 +251,8 @@ bgAlertFrame:SetScript("OnUpdate", function(_, delta)
     elapsed = elapsed + delta
     if elapsed < 60 then return end
     elapsed = 0
+    -- Master toggle: don't scan if alerts are disabled
+    if not TanaanTracker.GetAlertsEnabled() then return end
 
     if not TanaanTracker.rares then return end
     local now = GetServerTime()
@@ -549,6 +569,10 @@ EF:SetScript("OnEvent", function(_, event, ...)
         TanaanTracker:DebugPrint("Loaded for realm:", currentRealm)
         if TanaanTracker.CreateMinimapButton then TanaanTracker.CreateMinimapButton() end
         if TanaanTracker.CreateMainFrame then TanaanTracker.CreateMainFrame() end
+        -- load alert toggle
+        if TanaanTrackerDB.alertsEnabled == nil then
+            TanaanTrackerDB.alertsEnabled = true
+        end
     elseif event == "CHAT_MSG_ADDON" then
         if TanaanTracker.OnAddonMessage then TanaanTracker.OnAddonMessage(...) end
     elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then

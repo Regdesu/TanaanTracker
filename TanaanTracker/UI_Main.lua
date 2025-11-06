@@ -166,6 +166,47 @@ function TanaanTracker.CreateMainFrame()
     autoLbl:SetText("Auto announce")
     autoLbl:SetJustifyH("RIGHT")
 
+
+    ---------------------------
+    -- START OF ALERT TOGGLE
+    ---------------------------
+
+    -- alerts toggle checkbox
+    local alerts = CreateFrame("CheckButton", nil, f, "ChatConfigCheckButtonTemplate")
+    alerts:SetSize(20, 20)
+    alerts:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -20, 5)
+    alerts:SetHitRectInsets(0, 0, 0, 0)
+    alerts.tooltip = "Show 5m/1m respawn alerts"
+
+    -- default ON unless explicitly false
+    if TanaanTrackerDB.alertsEnabled == nil then
+        TanaanTrackerDB.alertsEnabled = true
+    end
+    alerts:SetChecked(TanaanTrackerDB.alertsEnabled)
+
+    alerts:SetScript("OnClick", function(self)
+        TanaanTrackerDB.alertsEnabled = self:GetChecked() and true or false
+    end)
+
+    -- label for alerts
+    local alertsLbl = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    alertsLbl:SetPoint("RIGHT", alerts, "LEFT", -4, 0)
+    alertsLbl:SetText("Alerts")
+    alertsLbl:SetJustifyH("RIGHT")
+
+    -- elvui skin (if available)
+    if ElvUI and ElvUI[1] and ElvUI[1].GetModule then
+        local E = ElvUI[1]
+        local S = E:GetModule("Skins", true)
+        if S and S.HandleCheckBox then
+            S:HandleCheckBox(alerts)
+        end
+    end
+
+    ---------------------------------
+    -- END OF ALERT TOGGLE
+    ----------------------------------
+
     -- ElvUI skin support
     if ElvUI and ElvUI[1] and ElvUI[1].GetModule then
         local E = ElvUI[1]
@@ -338,7 +379,8 @@ function TanaanTracker.UpdateUI()
                     w._lastRemainStr = remainStr
                 end
 
-                if TanaanTracker._MaybeAlert then
+                -- fire alerts only if enabled
+                if TanaanTracker._MaybeAlert and (not TanaanTrackerDB or TanaanTrackerDB.alertsEnabled ~= false) then
                     TanaanTracker._MaybeAlert(name, remaining)
                 end
 
