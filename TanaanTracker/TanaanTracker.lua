@@ -503,22 +503,33 @@ end
 -------------------------------------------------------------
 -- Combat Log + Loot tracking
 -------------------------------------------------------------
-local bit_band = bit.band
+local bit_band = bit and bit.band or function() return 0 end
 local AFFIL_MINE  = COMBATLOG_OBJECT_AFFILIATION_MINE
 local AFFIL_PARTY = COMBATLOG_OBJECT_AFFILIATION_PARTY
 local AFFIL_RAID  = COMBATLOG_OBJECT_AFFILIATION_RAID
 
+-- pull CLEU args from API if available, else from varargs
+local function CLArgs(...)
+    if type(CombatLogGetCurrentEventInfo) == "function" then
+        return CombatLogGetCurrentEventInfo()
+    else
+        return ...
+    end
+end
+
 local function handleCombatLog(...)
-    -- use CombatLogGetCurrentEventInfo() from the event handler
-    local _, subevent, _, srcGUID, srcName, srcFlags, _, destGUID = ...
+    -- timestamp, subevent, hideCaster, srcGUID, srcName, srcFlags, srcRaidFlags,
+    -- destGUID, destName, destFlags, destRaidFlags
+    local _, subevent, _, srcGUID, srcName, srcFlags, _, destGUID = CLArgs(...)
 
     if not destGUID or not subevent then return end
     if subevent ~= "UNIT_DIED" and subevent ~= "PARTY_KILL" then return end
 
-    -- extract NPC ID and ensure it's one of our rares
+    -- extract NPC ID from GUID
     local npcId = tonumber(destGUID:match("-(%d+)-%x+$"))
     if not npcId then return end
 
+    -- find which rare it is
     local rares = TanaanTracker.rares
     local matchedName, data
     for rareName, rdata in pairs(rares) do
@@ -530,14 +541,14 @@ local function handleCombatLog(...)
     local last = (lastWrite[matchedName] or 0)
     if (now - last) < WRITE_THROTTLE then return end
 
-    -- always record the timer on any observed death of the rare
+    -- always record the timer when we observe the rare’s death (in vicinity)
     TanaanTracker:RealmDB()[matchedName] = now
     lastWrite[matchedName] = now
     print(string.format("|cffff0000%s killed!|r Respawn timer started (%d min).", matchedName, (data.respawn or 3600)/60))
     TanaanTracker:DebugPrint("Saved time for", matchedName, now)
 
-    -- only mark character-kill + announce when player/party/raid got credit (used to register kill mark even if player was simply in vicinity of rare)
-    if subevent == "PARTY_KILL" and bit_band(srcFlags or 0, AFFIL_MINE + AFFIL_PARTY + AFFIL_RAID) ~= 0 then
+    -- Only mark “killed today” + auto-announce if *player/party/raid* got the kill (used to register kill mark even if player was simply in vicinity of rare)
+    if subevent == "PARTY_KILL" and bit_band(srcFlags or 0, (AFFIL_MINE or 0) + (AFFIL_PARTY or 0) + (AFFIL_RAID or 0)) ~= 0 then
         if TanaanTracker.MarkCharKillToday then
             TanaanTracker.MarkCharKillToday(matchedName)
         end
@@ -547,7 +558,6 @@ local function handleCombatLog(...)
         end
     end
 
-    -- Sync + refresh UI
     if TanaanTracker.SendGuildSync then
         TanaanTracker.SendGuildSync(matchedName, now)
     end
@@ -555,6 +565,7 @@ local function handleCombatLog(...)
         TanaanTracker.UpdateUI()
     end
 end
+
 
 
 local function handleLootOpened()
@@ -603,7 +614,7 @@ EF:SetScript("OnEvent", function(_, event, ...)
     elseif event == "CHAT_MSG_ADDON" then
         if TanaanTracker.OnAddonMessage then TanaanTracker.OnAddonMessage(...) end
     elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
-        handleCombatLog(CombatLogGetCurrentEventInfo())
+        handleCombatLog(...)
     elseif event == "LOOT_OPENED" then
         handleLootOpened()
     end
