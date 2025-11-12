@@ -29,10 +29,10 @@ The addon also syncs your data with others in your guild automatically so everyo
 
 ### 🔄 Sync With Other Players
 - **Automatic guild sync:** Timers are shared automatically between guild members.  
-- **Manual sync:** Use `/tsync` to sync with others:
-/tsync party → Sync with your party
-/tsync raid → Sync with your raid
-/tsync <player> → Two-way sync via whisper
+- **Manual sync:** Use `/tsync` to sync with others: </br>
+`/tsync party` → Sync with your party </br>
+`/tsync raid` → Sync with your raid </br>
+`/tsync <player>` → sync via whisper
 
 - All synced timers are merged intelligently — no duplicates or outdated overwrites.
 
