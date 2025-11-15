@@ -269,6 +269,7 @@ function TanaanTracker.CreateMainFrame()
             local db = TanaanTracker:ViewedRealmDB()
             local t = db[name]
             local msgOut
+
             if t and type(t) == "number" then
                 local remaining = (t + data.respawn) - GetServerTime()
                 if remaining < 0 then remaining = 0 end
@@ -278,6 +279,31 @@ function TanaanTracker.CreateMainFrame()
                 msgOut = name .. ": no data yet"
             end
 
+            -------------------------------------------------------
+            -- SHIFT-MODIFIER LOGIC
+            -------------------------------------------------------
+            if IsShiftKeyDown() then
+                -- SHIFT + LMB = global channel announce
+                if btn == "LeftButton" then
+                    local chanId = GetChannelName("global")
+                    if chanId and chanId > 0 then
+                        SendChatMessage(msgOut, "CHANNEL", nil, chanId)
+                    else
+                        print("|cffff0000[TanaanTracker]|r You are not in channel 'global'.")
+                    end
+                    return
+                end
+
+                -- SHIFT + RMB = YELL
+                if btn == "RightButton" then
+                    SendChatMessage(msgOut, "YELL")
+                    return
+                end
+            end
+
+            -------------------------------------------------------
+            -- NORMAL (NON-SHIFT) BEHAVIOR
+            -------------------------------------------------------
             if btn == "LeftButton" then
                 if IsInGuild() then
                     SendChatMessage(msgOut, "GUILD")
@@ -288,6 +314,7 @@ function TanaanTracker.CreateMainFrame()
                 SendChatMessage(msgOut, "SAY")
             end
         end)
+
 
         -- Tooltip
         nameBtn:SetScript("OnEnter", function()
