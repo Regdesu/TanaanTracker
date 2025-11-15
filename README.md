@@ -1,4 +1,4 @@
-# 🗺️ TanaanTracker Version 2.2.1
+# 🗺️ TanaanTracker Version 2.3
 <p align="center">
   <img src="https://github.com/user-attachments/assets/a4ded28c-cf55-46ad-b105-0fbf0b96af2f" alt="TanaanTracker Logo" width="300" box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);"/>
 </p>
@@ -28,7 +28,8 @@ The addon also syncs your data with others in your guild automatically so everyo
 - Quickly switch between realms using the dropdown at the top of the addon window.
 
 ### 🔄 Sync With Other Players
-- **Automatic guild sync:** Timers are shared automatically between guild members.  
+- **Automatic guild sync:** Timers are shared automatically between guild members.
+- **Global Channel sync:** you can now try to check if users in your global realm channel got newer timers (1 hour cooldown, requires v2.3 for all users to work)
 - **Manual sync:** Use `/tsync` to sync with others: </br>
 `/tsync party` → Sync with your party </br>
 `/tsync raid` → Sync with your raid </br>
@@ -99,8 +100,12 @@ You can also **click the minimap button** to open or close the UI.
 </p>
 
   `Left clicking` a rare's name will send it's timer to your `/guild`.
+
+  `Shift+Left clicking` a rare's name will send it's timer to `/global`.
   
   `Right clicking` will send to `/say`.
+  
+  `Shift+Right clicking` will send to `/yell`.
 
 ---
 
