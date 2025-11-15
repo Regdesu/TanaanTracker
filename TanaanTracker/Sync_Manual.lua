@@ -81,7 +81,7 @@ SlashCmdList["TSYNC"] = function(msg)
 
     if cmd == "party" then
         if IsInGroup() then
-            print("|cff66ff66[TanaanTracker]|r Requesting sync from party...")
+            print("|cff66ff66[TanaanTracker]|r Requesting manual sync...")
             SafeSend("PARTY")
         else
             print("|cffff0000Not in a party.|r")
@@ -89,7 +89,7 @@ SlashCmdList["TSYNC"] = function(msg)
         return
     elseif cmd == "raid" then
         if IsInRaid() then
-            print("|cff66ff66[TanaanTracker]|r Requesting sync from raid...")
+            print("|cff66ff66[TanaanTracker]|r Requesting manual sync...")
             SafeSend("RAID")
         else
             print("|cffff0000Not in a raid.|r")
@@ -97,7 +97,7 @@ SlashCmdList["TSYNC"] = function(msg)
         return
     else
         local playerName = cmd
-        print("|cff66ff66[TanaanTracker]|r Requesting sync from |cffffff00" .. playerName .. "|r ...")
+        print("|cff66ff66[TanaanTracker]|r Requesting manual sync...")
         SafeSend("WHISPER", playerName)
     end
 end
@@ -125,9 +125,7 @@ function TanaanTracker.HandleManualSyncRequest(prefix, message, channel, sender)
     local myName = UnitName("player") or "Unknown"
     local total = 0
 
-    print(string.format("|cff66ff66[TanaanTracker]|r Manual sync request from |cffffff00%s|r — sending timers...", reqSender or sender))
-
-    -- Send all known realm data
+    -- send all known realm data
     if TanaanTrackerDB and TanaanTrackerDB.realms then
         for realmName, db in pairs(TanaanTrackerDB.realms) do
             if type(db) == "table" then
@@ -146,12 +144,6 @@ function TanaanTracker.HandleManualSyncRequest(prefix, message, channel, sender)
                 end
             end
         end
-    end
-
-    if total > 0 then
-        print(string.format("|cff66ff66[TanaanTracker]|r Sent %d timer(s) to %s.", total, reqSender or sender))
-    else
-        print(string.format("|cff66ff66[TanaanTracker]|r No data available to send to %s (DB empty or up to date).", reqSender or sender))
     end
 
     -------------------------------------------------
