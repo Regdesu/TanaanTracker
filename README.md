@@ -121,14 +121,17 @@ You can also **click the minimap button** to open or close the UI.
 
 Get the latest stable version of **TanaanTracker** here:
 
-➡️ **[Download Latest Release](https://github.com/Regdesu/TanaanTracker/releases/latest)**
-
-[![Download Latest](https://img.shields.io/github/downloads/Regdesu/TanaanTracker/latest/total?label=Latest%20Downloads)](https://github.com/Regdesu/TanaanTracker/releases/latest)
+<p>
+<a href="https://github.com/Regdesu/TanaanTracker/releases/latest"><img src="https://img.shields.io/badge/Download-Latest_Release-blue?style=for-the-badge"></a> &nbsp;&nbsp;&nbsp;&nbsp; <a href="https://github.com/Regdesu/TanaanTracker/releases/latest"><img src="https://img.shields.io/github/downloads/Regdesu/TanaanTracker/latest/total?label=Downloads&style=for-the-badge&color=479e64"></a>
+</p>
 
 
 You can also browse all published versions on the releases page:
 
-🔗 **[View All Releases](https://github.com/Regdesu/TanaanTracker/releases)**
+<a href="https://github.com/Regdesu/TanaanTracker/releases">
+<img src="https://img.shields.io/badge/View_All-Releases-blue?style=for-the-badge&color=ba9332">
+</a>
+
 
 
 ---
