@@ -123,6 +123,9 @@ Get the latest stable version of **TanaanTracker** here:
 
 ➡️ **[Download Latest Release](https://github.com/Regdesu/TanaanTracker/releases/latest)**
 
+[![Download Latest](https://img.shields.io/github/downloads/Regdesu/TanaanTracker/latest/total?label=Latest%20Downloads)](https://github.com/Regdesu/TanaanTracker/releases/latest)
+
+
 You can also browse all published versions on the releases page:
 
 🔗 **[View All Releases](https://github.com/Regdesu/TanaanTracker/releases)**
