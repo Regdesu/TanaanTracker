@@ -117,6 +117,19 @@ You can also **click the minimap button** to open or close the UI.
 
 ---
 
+## 📥 Download
+
+Get the latest stable version of **TanaanTracker** here:
+
+➡️ **[Download Latest Release](https://github.com/Regdesu/TanaanTracker/releases/latest/download/TanaanTracker.zip)**
+
+You can also browse all published versions on the releases page:
+
+🔗 **[View All Releases](https://github.com/Regdesu/TanaanTracker/releases)**
+
+
+---
+
 ## 📜 License
 This addon is distributed freely for personal use.  
 Modification and redistribution are allowed provided proper credit is given to the original author.
